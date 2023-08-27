@@ -177,3 +177,52 @@ class ProjectionLayer(nn.Module):
     
     def forward(self,x):
         return torch.log_softmax(self.proj(x),dim=-1)
+    
+
+
+class Transformer(nn.Module):
+    def __init__(self,encoder: Encoder,decoder: Decoder, src_embed: InputEmbeddings,target_embed:InputEmbeddings, src_pos:PositionalEncoding, target_pos:PositionalEncoding,projection_layer:ProjectionLayer) -> None:
+        super().__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+        self.src_embed = src_embed
+        self.target_embed = target_embed
+        self.src_pos = src_pos
+        self.target_pos = target_pos
+        self.projection_layer = projection_layer
+
+    def encode(self,src,src_mask):
+        return self.encoder(self.src_pos(self.src_embed(src)),src_mask)
+    
+    def decode(self,target,enc_output,src_mask,target_mask):
+        return self.decoder(self.target_pos(self.target_embed(target)),enc_output,src_mask,target_mask)
+    
+    def project(self,x):
+        return self.projection_layer(x)
+    
+
+def build_transformer(src_vocab_size: int,target_vocab_size:int,src_seq_len:int,target_seq_len:int ,d_model:int = 512, N: int =6,h:int=8 , dropout:float = 0.1,d_ff:int = 2048) -> Transformer:
+    src_embed = InputEmbeddings(d_model,src_vocab_size)
+    target_embed = InputEmbeddings(d_model,target_vocab_size)
+
+    src_pos = PositionalEncoding(d_model,src_seq_len,dropout)
+    target_pos = PositionalEncoding(d_model,target_seq_len,dropout)
+
+    projection_layer = ProjectionLayer(d_model,target_vocab_size)
+
+    encoder = Encoder(nn.ModuleList([EncoderLayer(MultiHeadAttention(d_model,h,dropout),FeedForward(d_model,d_ff,dropout),dropout) for i in range(N)]))
+    decoder = Decoder(nn.ModuleList([DecoderBlock(MultiHeadAttention(d_model,h,dropout),MultiHeadAttention(d_model,h,dropout),FeedForward(d_model,d_ff,dropout),dropout) for i in range(N)]))
+
+    transformer = Transformer(encoder,decoder,src_embed,target_embed,src_pos,target_pos,projection_layer)
+
+    for p in transformer.parameters():
+        if p.dim() > 1:
+            nn.init.xavier_uniform_(p)
+
+    return transformer
+
+
+
+
+
+
