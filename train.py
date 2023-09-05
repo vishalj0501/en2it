@@ -1,5 +1,6 @@
 from pathlib import Path
 from dataset import BilingualDataLoader
+from model import build_transformer
 
 import torch
 import torch.nn as nn
@@ -58,5 +59,10 @@ def get_ds(config):
     train_dataloader = DataLoader(train_ds, batch_size=config['batch_size'], shuffle=True)
     val_dataloader = DataLoader(val_ds, batch_size=1, shuffle=True)
 
-    return train_dataloader, val_dataloader, tokenizer_source, tokenizer_target
+    return train_dataloader, val_dataloader, tokenizer_source, tokenizer_target 
 
+
+
+def get_model(config, vocab_source_len,vocab_target_len):
+    model=build_transformer(vocab_source_len,vocab_target_len,config['seq_len'],config['seq_len'],config['d_model'])
+    return model
