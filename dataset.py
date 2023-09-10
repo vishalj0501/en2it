@@ -5,7 +5,8 @@ from torch.utils.data import random_split,DataLoader,Dataset
 class BilingualDataLoader(Dataset):
     def __init__(self,ds,source_tokenizer,target_tokenizer,source_lang,target_lang,seq_len) -> None:
         super().__init__()
-
+        
+        self.seq_len = seq_len
         self.ds = ds
         self.source_tokenizer = source_tokenizer
         self.target_tokenizer = target_tokenizer
