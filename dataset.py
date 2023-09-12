@@ -13,17 +13,17 @@ class BilingualDataLoader(Dataset):
         self.source_lang = source_lang
         self.target_lang = target_lang
 
-        self.sos_token = torch.Tensor([source_tokenizer.token_to_id(['SOS'])],dtype=torch.int64)
-        self.eos_token = torch.Tensor([source_tokenizer.token_to_id(['EOS'])],dtype=torch.int64)
-        self.pad_token = torch.Tensor([source_tokenizer.token_to_id(['PAD'])],dtype=torch.int64)
+        self.sos_token = torch.tensor([target_tokenizer.token_to_id("[SOS]")],dtype=torch.int64)
+        self.eos_token = torch.tensor([target_tokenizer.token_to_id("[EOS]")],dtype=torch.int64)
+        self.pad_token = torch.tensor([target_tokenizer.token_to_id("[PAD]")],dtype=torch.int64)
 
     def __len__(self):
         return len(self.ds)
     
     def __getitem__(self, index):
         source_target_pair= self.ds[index]
-        source_text=source_target_pair[self.source_lang]
-        target_text=source_target_pair[self.target_lang]
+        source_text=source_target_pair['translation'][self.source_lang]
+        target_text=source_target_pair['translation'][self.target_lang]
 
         encoder_input_tokens=self.tokenizer_src.encode(source_text).ids
         decoder_input_tokens=self.tokenizer_target.encode(target_text).ids

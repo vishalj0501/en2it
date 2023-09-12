@@ -10,8 +10,9 @@ def get_config():
         "src_lang": "en",
         "target_lang": "it",
         "model_filename": "tmodel_",
+        "model_folder": "weights",
         "preload": None,
-        "tokenizer_file":"tokenizer_{0}.json",
+        "tokenizer_path":"tokenizer_{0}.json",
         "experiment_name": "runs/tmodel",
     }
 
