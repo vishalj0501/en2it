@@ -11,16 +11,17 @@ class InputEmbeddings(nn.Module):
         return self.embed(x)*torch.sqrt(torch.tensor(self.d_model,dtype=torch.float32))
     
 class PositionalEncoding(nn.Module):
-    def __init__(self,d_model,seq_len,dropout):
+    def __init__(self,d_model : int ,seq_len: int,dropout: float):
         super().__init__()
         self.d_model = d_model
         self.seq_len = seq_len
         self.dropout = nn.Dropout(dropout)
 
         pe = torch.zeros(seq_len,d_model)
-        position = torch.arange(0,seq_len-1,dtype=torch.float32).unsqueeze(1)
+        position = torch.arange(0,seq_len,dtype=torch.float32).unsqueeze(1)
 
         div_term = torch.exp(torch.arange(0,d_model,2).float()*(-torch.log(torch.tensor(10000.0))/d_model))
+
         pe[:,0::2] = torch.sin(position*div_term)
         pe[:,1::2] = torch.cos(position*div_term)
 
