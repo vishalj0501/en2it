@@ -25,8 +25,8 @@ class BilingualDataLoader(Dataset):
         source_text=source_target_pair['translation'][self.source_lang]
         target_text=source_target_pair['translation'][self.target_lang]
 
-        encoder_input_tokens=self.tokenizer_src.encode(source_text).ids
-        decoder_input_tokens=self.tokenizer_target.encode(target_text).ids
+        encoder_input_tokens=self.source_tokenizer.encode(source_text).ids
+        decoder_input_tokens=self.target_tokenizer.encode(target_text).ids
 
         encoder_pad_len = self.seq_len - len(encoder_input_tokens) - 2
         decoder_pad_len = self.seq_len - len(decoder_input_tokens) - 1 
