@@ -81,7 +81,7 @@ def train_model(config):
 
     Path(config['model_folder']).mkdir(parents=True, exist_ok=True)
     train_dataloader, val_dataloader, tokenizer_source, tokenizer_target = get_ds(config)
-    model= get_model(config, tokenizer_source.get_vocab_size(),tokenizer_target.get_vocab_size())
+    model= get_model(config, tokenizer_source.get_vocab_size(),tokenizer_target.get_vocab_size()).to(device)
     writer= SummaryWriter(config['experiment_name'])
 
     optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'], eps=1e-9)
