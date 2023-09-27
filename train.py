@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 from config import get_config, get_weights_file_path
 from dataset import BilingualDataLoader,causal_mask
 from model import build_transformer
@@ -15,8 +16,6 @@ from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import Whitespace
 from tokenizers.trainers import WordLevelTrainer
-
-
 
 
 def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_len, device):
@@ -52,7 +51,7 @@ def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, 
     predicted = []
 
     try:
-        with os.popen('stty size', 'r') as console:
+        with os.open('stty size', 'r') as console:
             _, console_width = console.read().split()
             console_width = int(console_width)
     except:
